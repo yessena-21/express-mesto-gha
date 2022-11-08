@@ -18,7 +18,7 @@ module.exports.createUser = (req, res) => {
 module.exports.getUserByID = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(404).send({ message: `Запрашиваемый пользователь не найден ${err.message}`}));
+    .catch((err) => res.status(400).send({ message: `Запрашиваемый пользователь не найден ${err.message}` }));
 };
 
 module.exports.updateUser = (req, res) => {
