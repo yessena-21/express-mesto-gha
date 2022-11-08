@@ -1,7 +1,6 @@
 const User = require('../models/user');
 
 module.exports.getUsers = (req, res) => {
-  console.log('все юзеры');
   User.find({})
     .then((users) => res.send({ data: users }))
     .catch((err) => res.status(500).send({ message: `${err.message}` }));
@@ -14,13 +13,12 @@ module.exports.createUser = (req, res) => {
     // вернём записанные в базу данные
     .then((user) => res.send({ data: user }))
     // данные не записались, вернём ошибку
-    .catch((err) => res.status(400).send({ message: 'Переданы некоррекные данные' }));
+    .catch((err) => res.status(400).send({ message: `Переданы некорректные данные ${err.message}` }));
 };
 module.exports.getUserByID = (req, res) => {
-  console.log('1 юзеры');
   User.findById(req.params.userId)
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(404).send({ message: 'Запрашиваемый пользователь не найден' }));
+    .catch((err) => res.status(404).send({ message: `Запрашиваемый пользователь не найден ${err.message}`}));
 };
 
 module.exports.updateUser = (req, res) => {
@@ -33,7 +31,7 @@ module.exports.updateUser = (req, res) => {
       new: true,
     },
   ).then((user) => res.send({ data: user }))
-    .catch((err) => res.status(400).send({ message: 'Запрашиваемый пользователь не найден' }));
+    .catch((err) => res.status(400).send({ message: `Запрашиваемый пользователь не найден ${err.message}` }));
 };
 
 module.exports.updateUseravatar = (req, res) => {
@@ -46,5 +44,5 @@ module.exports.updateUseravatar = (req, res) => {
       new: true,
     },
   ).then((user) => res.send({ data: user }))
-    .catch((err) => res.status(400).send({ message: 'Запрашиваемый пользователь не найден' }));
+    .catch((err) => res.status(400).send({ message: `Запрашиваемый пользователь не найден ${err.message}` }));
 };
