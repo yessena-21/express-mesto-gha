@@ -13,7 +13,7 @@ module.exports.createUser = (req, res) => {
     // вернём записанные в базу данные
     .then((user) => res.send({ data: user }))
     // данные не записались, вернём ошибку
-    .catch((err) => res.status(err.status).send({ message: `Переданы некорректные данные ${err.message}` }));
+    .catch((err) => res.status(400).send({ message: `Переданы некорректные данные ${err.message}` }));
 };
 module.exports.getUserByID = (req, res) => {
   User.findById(req.params.userId)
