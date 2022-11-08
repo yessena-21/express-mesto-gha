@@ -11,12 +11,12 @@ const createCard = (req, res) => {
 
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.send({ data: card }))
-    .catch((err) => res.status(500).send({ message: `${err.message}` }));
+    .catch((err) => res.status(400).send({ message: `${err.message}` }));
 };
 const deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => res.send({ data: card }))
-    .catch((err) => res.status(500).send({ message: `${err.message}` }));
+    .catch((err) => res.status(404).send({ message: `${err.message}` }));
 };
 
 const likeCard = (req, res) => {
@@ -25,7 +25,7 @@ const likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true },
   ).then((card) => res.send({ data: card }))
-    .catch((err) => res.status(500).send({ message: `${err.message}` }));
+    .catch((err) => res.status(400).send({ message: `${err.message}` }));
 };
 
 const dislikeCard = (req, res) => {
@@ -35,7 +35,7 @@ const dislikeCard = (req, res) => {
     { new: true },
   ).then((card) => res.send({ data: card }))
   // данные не записались, вернём ошибку
-    .catch((err) => res.status(500).send({ message: `${err.message}` }));
+    .catch((err) => res.status(404).send({ message: `${err.message}` }));
 };
 
 module.exports = {
