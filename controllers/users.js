@@ -39,7 +39,15 @@ module.exports.updateUser = (req, res) => {
       new: true,
     },
   ).then((user) => res.send({ data: user }))
-    .catch((err) => res.status(404).send({ message: `Запрашиваемый пользователь не найден ${err.message}` }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: `${Object.values(err.errors).map((error) => error.message).join(', ')}` });
+      } else {
+        res.status(500).send({ message: 'Произошла ошибка' });
+      }
+    });
+  // eslint-disable-next-line max-len
+  // .catch((err) => res.status(404).send({ message: `Запрашиваемый пользователь не найден ${err.message}` }));
 };
 
 module.exports.updateUseravatar = (req, res) => {
@@ -52,5 +60,13 @@ module.exports.updateUseravatar = (req, res) => {
       new: true,
     },
   ).then((user) => res.send({ data: user }))
-    .catch((err) => res.status(404).send({ message: `Запрашиваемый пользователь не найден ${err.message}` }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: `${Object.values(err.errors).map((error) => error.message).join(', ')}` });
+      } else {
+        res.status(500).send({ message: 'Произошла ошибка' });
+      }
+    });
+  // eslint-disable-next-line max-len
+  // .catch((err) => res.status(404).send({ message: `Запрашиваемый пользователь не найден ${err.message}` }));
 };
