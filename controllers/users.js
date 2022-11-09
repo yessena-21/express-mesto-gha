@@ -26,7 +26,7 @@ module.exports.createUser = (req, res) => {
 module.exports.getUserByID = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(err.status).send({ message: `Запрашиваемый пользователь не найден ${err.message}` }));
+    .catch((err) => res.status(404).send({ message: `Запрашиваемый пользователь не найден ${err.message}` }));
 };
 
 module.exports.updateUser = (req, res) => {
@@ -39,7 +39,7 @@ module.exports.updateUser = (req, res) => {
       new: true,
     },
   ).then((user) => res.send({ data: user }))
-    .catch((err) => res.status(err.status).send({ message: `Запрашиваемый пользователь не найден ${err.message}` }));
+    .catch((err) => res.status(404).send({ message: `Запрашиваемый пользователь не найден ${err.message}` }));
 };
 
 module.exports.updateUseravatar = (req, res) => {
@@ -52,5 +52,5 @@ module.exports.updateUseravatar = (req, res) => {
       new: true,
     },
   ).then((user) => res.send({ data: user }))
-    .catch((err) => res.status(err.status).send({ message: `Запрашиваемый пользователь не найден ${err.message}` }));
+    .catch((err) => res.status(404).send({ message: `Запрашиваемый пользователь не найден ${err.message}` }));
 };
