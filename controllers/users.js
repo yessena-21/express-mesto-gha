@@ -2,7 +2,7 @@ const User = require('../models/user');
 
 module.exports.getUsers = (req, res) => {
   User.find({})
-    .then((users) => res.send({ data: users }))
+    .then((users) => res.status(200).send({ data: users }))
     .catch((err) => res.status(err.status).send({ message: `${err.message}` }));
 };
 
@@ -11,7 +11,7 @@ module.exports.createUser = (req, res) => {
 
   User.create({ name, about, avatar })
     // вернём записанные в базу данные
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.status(201).send({ data: user }))
     // данные не записались, вернём ошибку
     // eslint-disable-next-line max-len
     // .catch((err) => res.status(400).send({ message: `Переданы некорректные данные ${err.message}` }));
@@ -28,8 +28,8 @@ module.exports.getUserByID = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'User not found cast error' });
-      } else if (err.StatusCode === 404) {
+        res.status(404).send({ message: 'User not found cast error' });
+      } else if (err.Status === 404) {
         res.status(404).send({ message: 'User not found' });
       } else {
         res.status(500).send({ message: 'Произошла ошибка' });
@@ -44,12 +44,15 @@ module.exports.updateUser = (req, res) => {
     req.user._id,
     { name, about },
     {
+      runValidators: true,
       new: true,
     },
   ).then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: `${Object.values(err.errors).map((error) => error.message).join(', ')}` });
+        // eslint-disable-next-line max-len
+        //  res.status(400).send({ message: `${Object.values(err.errors).map((error) => error.message).join(', ')}` });
+        res.status(400).send({ message: 'Некорректные данные' });
       } else {
         res.status(500).send({ message: 'Произошла ошибка' });
       }
@@ -65,6 +68,7 @@ module.exports.updateUseravatar = (req, res) => {
     req.user._id,
     { avatar },
     {
+      runValidators: true,
       new: true,
     },
   )
