@@ -1,4 +1,5 @@
 const Card = require('../models/card');
+const { NotFoundError } = require('../errors/not-found-error');
 
 const getCards = (req, res) => {
   Card.find({})
@@ -11,12 +12,27 @@ const createCard = (req, res) => {
 
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.send({ data: card }))
-    .catch((err) => res.status(err.status).send({ message: `${err.message}` }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: 'Некорректные данные запроса' });
+      } else {
+        res.status(500).send({ message: 'Произошла ошибка' });
+      }
+    });
 };
 const deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
+    .orFail(new NotFoundError('Карточка по указанному id не найдена'))
     .then((card) => res.send({ data: card }))
-    .catch((err) => res.status(err.status).send({ message: `${err.message}` }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Некорректный ID карточки' });
+      } else if (err instanceof NotFoundError) {
+        res.status(404).send({ message: `${err.message}` });
+      } else {
+        res.status(500).send({ message: 'Произошла ошибка' });
+      }
+    });
 };
 
 const likeCard = (req, res) => {
@@ -24,8 +40,17 @@ const likeCard = (req, res) => {
     req.params.cardId,
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true },
-  ).then((card) => res.send({ data: card }))
-    .catch((err) => res.status(err.status).send({ message: `${err.message}` }));
+  ).orFail(new NotFoundError('Карточка по указанному id не найдена'))
+    .then((card) => res.send({ data: card }))
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Некорректный ID карточки' });
+      } else if (err instanceof NotFoundError) {
+        res.status(404).send({ message: `${err.message}` });
+      } else {
+        res.status(500).send({ message: 'Произошла ошибка' });
+      }
+    });
 };
 
 const dislikeCard = (req, res) => {
@@ -33,9 +58,17 @@ const dislikeCard = (req, res) => {
     req.params.cardId,
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true },
-  ).then((card) => res.send({ data: card }))
-  // данные не записались, вернём ошибку
-    .catch((err) => res.status(err.status).send({ message: `${err.message}` }));
+  ).orFail(new NotFoundError('Карточка по указанному id не найдена'))
+    .then((card) => res.send({ data: card }))
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Некорректный ID карточки' });
+      } else if (err instanceof NotFoundError) {
+        res.status(404).send({ message: `${err.message}` });
+      } else {
+        res.status(500).send({ message: 'Произошла ошибка' });
+      }
+    });
 };
 
 module.exports = {
