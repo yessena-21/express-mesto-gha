@@ -26,7 +26,16 @@ module.exports.createUser = (req, res) => {
 module.exports.getUserByID = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(404).send({ message: `Запрашиваемый пользователь не найден ${err.message}` }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'User not found cast error' });
+      } else if (err.StatusCode === 404) {
+        res.status(404).send({ message: 'User not found' });
+      }
+      else {
+        res.status(500).send({ message: 'Произошла ошибка' });
+      }
+    });
 };
 
 module.exports.updateUser = (req, res) => {
@@ -59,7 +68,8 @@ module.exports.updateUseravatar = (req, res) => {
     {
       new: true,
     },
-  ).then((user) => res.send({ data: user }))
+  )
+    .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: `${Object.values(err.errors).map((error) => error.message).join(', ')}` });
