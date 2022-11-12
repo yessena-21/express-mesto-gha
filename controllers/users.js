@@ -28,7 +28,7 @@ module.exports.getUserByID = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(404).send({ message: 'User not found cast error' });
+        res.status(400).send({ message: 'User not found cast error' });
       } else if (err.Status === 404) {
         res.status(404).send({ message: 'User not found' });
       } else {
@@ -50,15 +50,11 @@ module.exports.updateUser = (req, res) => {
   ).then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        // eslint-disable-next-line max-len
-        //  res.status(400).send({ message: `${Object.values(err.errors).map((error) => error.message).join(', ')}` });
         res.status(400).send({ message: 'Некорректные данные' });
       } else {
         res.status(500).send({ message: 'Произошла ошибка' });
       }
     });
-  // eslint-disable-next-line max-len
-  // .catch((err) => res.status(404).send({ message: `Запрашиваемый пользователь не найден ${err.message}` }));
 };
 
 module.exports.updateUseravatar = (req, res) => {
@@ -80,6 +76,4 @@ module.exports.updateUseravatar = (req, res) => {
         res.status(500).send({ message: 'Произошла ошибка' });
       }
     });
-  // eslint-disable-next-line max-len
-  // .catch((err) => res.status(404).send({ message: `Запрашиваемый пользователь не найден ${err.message}` }));
 };
