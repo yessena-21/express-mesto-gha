@@ -21,20 +21,22 @@ module.exports.createUser = (req, res) => {
       }
     });
 };
-module.exports.getUserByID = (req, res, next) => {
+module.exports.getUserByID = (req, res) => {
   User.findById(req.params.userId)
-    .orFail(() => next(new NotFoundError('Пользователь по указанному id не найден')))
+    .orFail(new NotFoundError('Пользователь по указанному id не найден'))
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(400).send({ message: 'Некорректный ID' });
+      } else if (err instanceof NotFoundError) {
+        res.status(404).send({ message: `${err.message}` });
       } else {
-        next(err);
+        res.status(500).send({ message: 'Произошла ошибка' });
       }
     });
 };
 
-module.exports.updateUser = (req, res, next) => {
+module.exports.updateUser = (req, res) => {
   const { name, about } = req.body;
 
   User.findByIdAndUpdate(
@@ -44,18 +46,20 @@ module.exports.updateUser = (req, res, next) => {
       runValidators: true,
       new: true,
     },
-  ).orFail(() => next(new NotFoundError('Пользователь по указанному id не найден')))
+  ).orFail(new NotFoundError('Пользователь по указанному id не найден'))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Некорректные данные' });
+      } else if (err instanceof NotFoundError) {
+        res.status(404).send({ message: `${err.message}` });
       } else {
-        next(err);
+        res.status(500).send({ message: 'Произошла ошибка' });
       }
     });
 };
 
-module.exports.updateUseravatar = (req, res, next) => {
+module.exports.updateUseravatar = (req, res) => {
   const { avatar } = req.body;
 
   User.findByIdAndUpdate(
@@ -66,11 +70,13 @@ module.exports.updateUseravatar = (req, res, next) => {
       new: true,
     },
   )
-    .orFail(() => next(new NotFoundError('Пользователь по указанному id не найден')))
+    .orFail(new NotFoundError('Пользователь по указанному id не найден'))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: `${Object.values(err.errors).map((error) => error.message).join(', ')}` });
+      } else if (err instanceof NotFoundError) {
+        res.status(404).send({ message: `${err.message}` });
       } else {
         res.status(500).send({ message: 'Произошла ошибка' });
       }
