@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const { NotFoundError } = require('./errors/not-found-error');
 
 const { PORT = 3000 } = process.env;
 
@@ -20,6 +21,9 @@ app.use(bodyParser.json());
 app.use('/', require('./routes/users'));
 app.use('/', require('./routes/cards'));
 
+app.use('*', () => {
+  throw new NotFoundError('Страница не найдена');
+});
 app.listen(PORT, () => {
 
 });
