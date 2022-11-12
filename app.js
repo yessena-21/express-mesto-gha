@@ -21,8 +21,8 @@ app.use(bodyParser.json());
 app.use('/', require('./routes/users'));
 app.use('/', require('./routes/cards'));
 
-app.use('*', () => {
-  throw new NotFoundError('Страница не найдена');
+app.use('*', (req, res) => {
+  res.status(404).send({ message: 'Страница не найдена' });
 });
 app.listen(PORT, () => {
 
