@@ -31,8 +31,7 @@ module.exports.getUserByID = (req, res) => {
         res.status(400).send({ message: 'User not found cast error' });
       } else if (err.StatusCode === 404) {
         res.status(404).send({ message: 'User not found' });
-      }
-      else {
+      } else {
         res.status(500).send({ message: 'Произошла ошибка' });
       }
     });
