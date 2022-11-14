@@ -1,10 +1,15 @@
 const User = require('../models/user');
 const { NotFoundError } = require('../errors/not-found-error');
+const {
+  NOT_FOUND_USER,
+  SERVER_ERROR,
+  INCORRECT_DATA,
+} = require('../errors/errors');
 
 module.exports.getUsers = (req, res) => {
   User.find({})
-    .then((users) => res.status(200).send({ data: users }))
-    .catch((err) => res.status(err.status).send({ message: `${err.message}` }));
+    .then((users) => res.send({ data: users }))
+    .catch(() => res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' }));
 };
 
 module.exports.createUser = (req, res) => {
@@ -12,12 +17,12 @@ module.exports.createUser = (req, res) => {
 
   User.create({ name, about, avatar })
     // вернём записанные в базу данные
-    .then((user) => res.status(201).send({ data: user }))
+    .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Некорректные данные запроса' });
+        res.status(INCORRECT_DATA).send({ message: 'Некорректные данные запроса' });
       } else {
-        res.status(500).send({ message: 'Произошла ошибка' });
+        res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
       }
     });
 };
@@ -27,11 +32,11 @@ module.exports.getUserByID = (req, res) => {
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Некорректный ID' });
+        res.status(INCORRECT_DATA).send({ message: 'Некорректный ID' });
       } else if (err instanceof NotFoundError) {
-        res.status(404).send({ message: `${err.message}` });
+        res.status(NOT_FOUND_USER).send({ message: `${err.message}` });
       } else {
-        res.status(500).send({ message: 'Произошла ошибка' });
+        res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
       }
     });
 };
@@ -50,11 +55,11 @@ module.exports.updateUser = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Некорректные данные' });
+        res.status(INCORRECT_DATA).send({ message: 'Некорректные данные запроса' });
       } else if (err instanceof NotFoundError) {
-        res.status(404).send({ message: `${err.message}` });
+        res.status(NOT_FOUND_USER).send({ message: `${err.message}` });
       } else {
-        res.status(500).send({ message: 'Произошла ошибка' });
+        res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
       }
     });
 };
@@ -74,11 +79,11 @@ module.exports.updateUseravatar = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: `${Object.values(err.errors).map((error) => error.message).join(', ')}` });
+        res.status(INCORRECT_DATA).send({ message: 'Некорректные данные запроса' });
       } else if (err instanceof NotFoundError) {
-        res.status(404).send({ message: `${err.message}` });
+        res.status(NOT_FOUND_USER).send({ message: `${err.message}` });
       } else {
-        res.status(500).send({ message: 'Произошла ошибка' });
+        res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
       }
     });
 };

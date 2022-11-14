@@ -1,10 +1,15 @@
 const Card = require('../models/card');
 const { NotFoundError } = require('../errors/not-found-error');
+const {
+  NOT_FOUND_ARTICLE,
+  SERVER_ERROR,
+  INCORRECT_DATA,
+} = require('../errors/errors');
 
 const getCards = (req, res) => {
   Card.find({})
     .then((cards) => res.send({ data: cards }))
-    .catch((err) => res.status(err.status).send({ message: `${err.message}` }));
+    .catch(() => res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' }));
 };
 
 const createCard = (req, res) => {
@@ -14,9 +19,9 @@ const createCard = (req, res) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Некорректные данные запроса' });
+        res.status(INCORRECT_DATA).send({ message: 'Некорректные данные запроса' });
       } else {
-        res.status(500).send({ message: 'Произошла ошибка' });
+        res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
       }
     });
 };
@@ -26,11 +31,11 @@ const deleteCard = (req, res) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Некорректный ID карточки' });
+        res.status(INCORRECT_DATA).send({ message: 'Некорректный ID карточки' });
       } else if (err instanceof NotFoundError) {
-        res.status(404).send({ message: `${err.message}` });
+        res.status(NOT_FOUND_ARTICLE).send({ message: 'Запрашиваемая  карточка не найдена' });
       } else {
-        res.status(500).send({ message: 'Произошла ошибка' });
+        res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
       }
     });
 };
@@ -44,11 +49,11 @@ const likeCard = (req, res) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Некорректный ID карточки' });
+        res.status(INCORRECT_DATA).send({ message: 'Некорректный ID карточки' });
       } else if (err instanceof NotFoundError) {
-        res.status(404).send({ message: `${err.message}` });
+        res.status(NOT_FOUND_ARTICLE).send({ message: 'Запрашиваемая карточка не найдена' });
       } else {
-        res.status(500).send({ message: 'Произошла ошибка' });
+        res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
       }
     });
 };
@@ -62,11 +67,11 @@ const dislikeCard = (req, res) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Некорректный ID карточки' });
+        res.status(INCORRECT_DATA).send({ message: 'Некорректный ID карточки' });
       } else if (err instanceof NotFoundError) {
-        res.status(404).send({ message: `${err.message}` });
+        res.status(NOT_FOUND_ARTICLE).send({ message: 'Запрашиваемая карточка не найдена' });
       } else {
-        res.status(500).send({ message: 'Произошла ошибка' });
+        res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
       }
     });
 };
