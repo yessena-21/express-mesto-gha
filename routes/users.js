@@ -1,14 +1,31 @@
 const router = require('express').Router();
+const { celebrate, Joi } = require('celebrate');
 
 const {
-  getUsers, createUser, getUserByID, updateUser, updateUseravatar,
+  getUsers, getUserByID, updateUser, updateUseravatar, getUserInfo,
 } = require('../controllers/users');
 
-router.get('/users/:userId', getUserByID);
-router.get('/users', getUsers);
+// eslint-disable-next-line no-useless-escape
+const linkRegExp = /^(http|https):\/\/(www.)?[\w\-\.\_\~\:\/\?\#\[\]\@\!\$\&\'\(\)\*\+\,\;\=]+\.[\w\/]+#?/;
 
-router.post('/users', createUser);
-router.patch('/users/me', updateUser);
-router.patch('/users/me/avatar', updateUseravatar);
+router.get('/users/:userId', celebrate({
+  params: Joi.object().keys({
+    userId: Joi.string().length(24).hex(),
+  }),
+}), getUserByID);
+router.get('/users', getUsers);
+router.get('/users/me', getUserInfo);
+router.patch('/users/me', celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().required().min(2),
+    about: Joi.string().required().min(2),
+  }),
+}), updateUser);
+
+router.patch('/users/me/avatar', celebrate({
+  body: Joi.object().keys({
+    avatar: Joi.string().required().pattern(linkRegExp),
+  }),
+}), updateUseravatar);
 
 module.exports = router;
