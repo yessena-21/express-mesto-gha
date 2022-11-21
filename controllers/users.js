@@ -17,10 +17,10 @@ module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
   return User.findOne({ email }).select('+password')
     .then((user) => {
+      // eslint-disable-next-line consistent-return
       bcrypt.compare(password, user.password, (error, isValidPassword) => {
         if (!isValidPassword) return res.status(403).send({ message: 'Неверный пароль' });
-        const token = jwt.sign({ id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-        console.log(isValidPassword);
+        const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
         res.send({ token });
       });
     }).catch(next);
