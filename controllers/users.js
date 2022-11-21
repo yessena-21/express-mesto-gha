@@ -15,21 +15,27 @@ const {
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
-  return User.findUserByCredentials(email, password)
+  return User.findOne({ email }).select('+password')
     .then((user) => {
-      // создадим токен
-      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-      // вернём токен
-      res
-        .cookie('jwt', token, {
-        // token - наш JWT токен, который мы отправляем
-          maxAge: 3600000 * 24 * 7,
-          httpOnly: true,
-        });
-      // res.send({ token });
-    })
-    .catch(next);
+      bcrypt.compare(password, user.password, (error, isValidPassword) => {
+        if (!isValidPassword) return res.status(403).send({ message: 'Неверный пароль' });
+        const token = jwt.sign({ id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+        console.log(isValidPassword);
+        res.send({ token });
+      });
+    }).catch(next);
 };
+//   // создадим токен
+//   const token = jwt.sign({ id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+//   // вернём токен
+//   // res
+//   //   .cookie('jwt', token, {
+//   //   // token - наш JWT токен, который мы отправляем
+//   //     maxAge: 3600000 * 24 * 7,
+//   //     httpOnly: true,
+//   //   });
+//   res.send({ token });
+// }
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -80,7 +86,7 @@ module.exports.getUserByID = (req, res, next) => {
 module.exports.getUserInfo = (req, res) => {
   User.findById(req.user._id)
     .orFail(new NotFoundError('Пользователь по указанному id не найден'))
-    .then((user) => res.status(200).send({ data: user }))
+    .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(INCORRECT_DATA).send({ message: 'Некорректный ID' });
