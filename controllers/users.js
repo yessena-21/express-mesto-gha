@@ -21,6 +21,7 @@ module.exports.login = (req, res, next) => {
       bcrypt.compare(password, user.password, (error, isValidPassword) => {
         if (!isValidPassword) return res.status(403).send({ message: 'Неверный пароль' });
         const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+        console.log(isValidPassword);
         res.send({ token });
       });
     }).catch(next);
