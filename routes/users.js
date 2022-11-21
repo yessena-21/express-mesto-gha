@@ -17,8 +17,8 @@ router.get('/users', getUsers);
 router.get('/users/me', getUserInfo);
 router.patch('/users/me', celebrate({
   body: Joi.object().keys({
-    name: Joi.string().required().min(2),
-    about: Joi.string().required().min(2),
+    name: Joi.string().required().min(2).max(30),
+    about: Joi.string().required().min(2).max(30),
   }),
 }), updateUser);
 

@@ -47,12 +47,14 @@ module.exports.createUser = (req, res, next) => {
       email, password: hash, name, about, avatar,
     }))
     // вернём записанные в базу данные
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.send({
+      id: user._id, name: user.name, avatar: user.avatar, about: user.about,
+    }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new ValidationError('Переданы некорректные данные при создании пользователя'));
       }
-      console.log(err);
+
       if (err.name === 'MongoServerError' && err.code === 11000) {
         next(new ExistFieldError('Email уже существует'));
       } else {
