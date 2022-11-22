@@ -38,10 +38,9 @@ app.use(auth);
 app.use('/', require('./routes/users'));
 app.use('/', require('./routes/cards'));
 
-app.use('*', (next) => {
-  next(new NotFoundError('Страница не найдена'));
+app.use('*', () => {
+  throw new NotFoundError('Страница не найдена');
 });
-
 app.use(errors());
 
 app.use(errorsHandler);
