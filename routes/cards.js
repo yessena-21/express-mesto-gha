@@ -14,11 +14,17 @@ router.post('/cards', celebrate({
     link: Joi.string().required().pattern(linkRegExp),
   }),
 }), createCard);
+
 router.delete('/cards/:cardId', celebrate({
   params: Joi.object().keys({
     cardId: Joi.string().length(24).hex(),
   }),
 }), deleteCard);
+
+// router.delete('/cards/:cardId', () => {
+//   console.log('testing');
+// });
+
 router.put('/cards/:cardId/likes', celebrate({
   params: Joi.object().keys({
     cardId: Joi.string().length(24).hex(),

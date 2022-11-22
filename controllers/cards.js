@@ -24,21 +24,25 @@ const createCard = (req, res, next) => {
     });
 };
 const deleteCard = (req, res, next) => {
-  // const currentUser = req.user._id;
-  if (!Card.owner.id.equals(req.user._id)) {
-    next(new ForbiddenError('Вы не имеет права удалить карточку'));
-  } else {
-    Card.findByIdAndRemove(req.params.cardId)
-      .orFail(new NotFoundError('Карточка по указанному id не найдена'))
-      .then((card) => res.status(200).send({ data: card }))
-      .catch((err) => {
-        if (err.name === 'CastError') {
-          next(new CastError('Невалидный id карточки'));
-        } else {
-          next(err);
-        }
-      });
-  }
+  const { cardId } = req.params;
+  Card.findById(cardId)
+    .orFail(() => next(new NotFoundError('Карточка с указанным _id не найдена!!')))
+    .then((card) => {
+      if (!card.owner.equals(req.user._id)) {
+        next(new ForbiddenError('Вы не имеет права удалить карточку'));
+      } else {
+        Card.findByIdAndRemove(req.params.cardId)
+          .orFail(new NotFoundError('Карточка по указанному id не найдена'))
+          .then((data) => res.status(200).send(data))
+          .catch((err) => {
+            if (err.name === 'CastError') {
+              next(new CastError('Невалидный id карточки'));
+            } else {
+              next(err);
+            }
+          });
+      }
+    });
 };
 
 const likeCard = (req, res, next) => {
