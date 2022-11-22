@@ -13,8 +13,15 @@ router.get('/users/:userId', celebrate({
     userId: Joi.string().length(24).hex(),
   }),
 }), getUserByID);
+
 router.get('/users', getUsers);
-router.get('/users/me', getUserInfo);
+
+router.get('/users/me', celebrate({
+  params: Joi.object().keys({
+    userId: Joi.string().length(24).hex(),
+  }),
+}), getUserInfo);
+
 router.patch('/users/me', celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
