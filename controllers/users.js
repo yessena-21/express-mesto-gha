@@ -144,12 +144,8 @@ const updateUseravatar = (req, res, next) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        // res.status(INCORRECT_DATA).send({ message: 'Некорректные данные запроса' });
         next(new ValidationError('Некорректные данные запроса'));
-      // } else if (err instanceof NotFoundError) {
-      //   res.status(NOT_FOUND_USER).send({ message: `${err.message}` });
       } else {
-        // res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
         next(err);
       }
     });
