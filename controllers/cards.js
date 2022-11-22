@@ -30,7 +30,7 @@ const deleteCard = (req, res, next) => {
   } else {
     Card.findByIdAndRemove(req.params.cardId)
       .orFail(new NotFoundError('Карточка по указанному id не найдена'))
-      .then((card) => res.send({ data: card }))
+      .then((card) => res.status(200).send({ data: card }))
       .catch((err) => {
         if (err.name === 'CastError') {
           next(new CastError('Невалидный id карточки'));
