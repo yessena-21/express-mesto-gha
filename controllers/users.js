@@ -6,6 +6,7 @@ const { CastError } = require('../errors/cast-error');
 const { ValidationError } = require('../errors/validation-error');
 const { ExistFieldError } = require('../errors/exist-field-error');
 const { NotFoundError } = require('../errors/not-found-error');
+const { AuthError } = require('../errors/auth-error');
 
 // const {
 //   NOT_FOUND_USER,
@@ -13,19 +14,21 @@ const { NotFoundError } = require('../errors/not-found-error');
 //   INCORRECT_DATA,
 // } = require('../errors/errors');
 
-module.exports.login = (req, res, next) => {
+const login = (req, res, next) => {
   const { email, password } = req.body;
-  return User.findOne({ email }).select('+password')
+
+  User.findOne({ email }).select('+password')
     .then((user) => {
-      // eslint-disable-next-line consistent-return
       bcrypt.compare(password, user.password, (error, isValidPassword) => {
-        if (!isValidPassword) return res.status(403).send({ message: 'Неверный пароль' });
+        if (!isValidPassword) return res.status(403).send({ message: 'Неверный email или пароль' });
 
         const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
 
-        res.send({ token });
+        return res.send({ token });
       });
-    }).catch(next);
+    }).catch(() => {
+      next(new AuthError('Неверный email или пароль'));
+    });
 };
 //   // создадим токен
 //   const token = jwt.sign({ id: user._id }, 'some-secret-key', { expiresIn: '7d' });
@@ -39,13 +42,13 @@ module.exports.login = (req, res, next) => {
 //   res.send({ token });
 // }
 
-module.exports.getUsers = (req, res, next) => {
+const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send({ data: users }))
     .catch(next);
 };
 
-module.exports.createUser = (req, res, next) => {
+const createUser = (req, res, next) => {
   const {
     email, password, name, about, avatar,
   } = req.body;
@@ -70,7 +73,7 @@ module.exports.createUser = (req, res, next) => {
       }
     });
 };
-module.exports.getUserByID = (req, res, next) => {
+const getUserByID = (req, res, next) => {
   User.findById(req.params.userId)
     .orFail(new NotFoundError('Пользователь по указанному id не найден'))
     .then((user) => res.status(200).send({ data: user }))
@@ -85,7 +88,7 @@ module.exports.getUserByID = (req, res, next) => {
     });
 };
 
-module.exports.getUserInfo = (req, res, next) => {
+const getUserInfo = (req, res, next) => {
   const currentUser = req.user._id;
   User.findById(currentUser)
     .orFail(new NotFoundError('Пользователь по указанному id не найден'))
@@ -101,7 +104,7 @@ module.exports.getUserInfo = (req, res, next) => {
       }
     });
 };
-module.exports.updateUser = (req, res, next) => {
+const updateUser = (req, res, next) => {
   const { name, about } = req.body;
 
   User.findByIdAndUpdate(
@@ -126,7 +129,7 @@ module.exports.updateUser = (req, res, next) => {
     });
 };
 
-module.exports.updateUseravatar = (req, res, next) => {
+const updateUseravatar = (req, res, next) => {
   const { avatar } = req.body;
 
   User.findByIdAndUpdate(
@@ -150,4 +153,14 @@ module.exports.updateUseravatar = (req, res, next) => {
         next(err);
       }
     });
+};
+
+module.exports = {
+  login,
+  getUserInfo,
+  getUsers,
+  updateUser,
+  updateUseravatar,
+  getUserByID,
+  createUser,
 };
