@@ -1,7 +1,9 @@
+const { EXIST_ERROR } = require('./errors');
+
 class ExistFieldError extends Error {
   constructor(message) {
     super(message);
-    this.statusCode = 409;
+    this.statusCode = EXIST_ERROR;
   }
 }
 

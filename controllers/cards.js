@@ -42,6 +42,12 @@ const deleteCard = (req, res, next) => {
             }
           });
       }
+    }).catch((err) => {
+      if (err.name === 'CastError') {
+        next(new CastError('Невалидный id карточки'));
+      } else {
+        next(err);
+      }
     });
 };
 

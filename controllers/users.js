@@ -20,7 +20,7 @@ const login = (req, res, next) => {
   User.findOne({ email }).select('+password')
     .then((user) => {
       bcrypt.compare(password, user.password, (error, isValidPassword) => {
-        if (!isValidPassword) return res.status(403).send({ message: 'Неверный email или пароль' });
+        if (!isValidPassword) return next(new AuthError('Неверный email или пароль'));
 
         const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
 
@@ -64,9 +64,7 @@ const createUser = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new ValidationError('Переданы некорректные данные при создании пользователя'));
-      }
-
-      if (err.name === 'MongoServerError' && err.code === 11000) {
+      } else if (err.name === 'MongoServerError' && err.code === 11000) {
         next(new ExistFieldError('Email уже существует'));
       } else {
         next(err);

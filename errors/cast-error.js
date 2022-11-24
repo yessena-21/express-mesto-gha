@@ -1,7 +1,9 @@
+const { INCORRECT_DATA } = require('./errors');
+
 class CastError extends Error {
   constructor(message) {
     super(message);
-    this.statusCode = 400;
+    this.statusCode = INCORRECT_DATA;
   }
 }
 
