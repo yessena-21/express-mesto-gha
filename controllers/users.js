@@ -8,12 +8,6 @@ const { ExistFieldError } = require('../errors/exist-field-error');
 const { NotFoundError } = require('../errors/not-found-error');
 const { AuthError } = require('../errors/auth-error');
 
-// const {
-//   NOT_FOUND_USER,
-//   SERVER_ERROR,
-//   INCORRECT_DATA,
-// } = require('../errors/errors');
-
 const login = (req, res, next) => {
   const { email, password } = req.body;
 
@@ -30,17 +24,6 @@ const login = (req, res, next) => {
       next(new AuthError('Неверный email или пароль'));
     });
 };
-//   // создадим токен
-//   const token = jwt.sign({ id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-//   // вернём токен
-//   // res
-//   //   .cookie('jwt', token, {
-//   //   // token - наш JWT токен, который мы отправляем
-//   //     maxAge: 3600000 * 24 * 7,
-//   //     httpOnly: true,
-//   //   });
-//   res.send({ token });
-// }
 
 const getUsers = (req, res, next) => {
   User.find({})
@@ -78,8 +61,6 @@ const getUserByID = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new CastError('Невалидный id пользователя'));
-      // } else if (err instanceof NotFoundError) {
-      //   res.status(NOT_FOUND_USER).send({ message: `${err.message}` });
       } else {
         next(err);
       }
@@ -94,10 +75,7 @@ const getUserInfo = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new CastError('Невалидный id пользователя'));
-      // } else if (err instanceof NotFoundError) {
-      //   res.status(NOT_FOUND_USER).send({ message: `${err.message}` });
       } else {
-        // res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
         next(err);
       }
     });
@@ -116,12 +94,8 @@ const updateUser = (req, res, next) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        // res.status(INCORRECT_DATA).send({ message: 'Некорректные данные запроса' });
         next(new ValidationError('Некорректные данные запроса'));
-      // } else if (err instanceof NotFoundError) {
-      //   res.status(NOT_FOUND_USER).send({ message: `${err.message}` });
       } else {
-        // res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
         next(err);
       }
     });
