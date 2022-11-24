@@ -1,11 +1,9 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
+const { linkRegExp } = require('../utils/utils');
 const {
   getCards, createCard, deleteCard, likeCard, dislikeCard,
 } = require('../controllers/cards');
-
-// eslint-disable-next-line no-useless-escape
-const linkRegExp = /^(http|https):\/\/(www.)?[\w\-\.\_\~\:\/\?\#\[\]\@\!\$\&\'\(\)\*\+\,\;\=]+\.[\w\/]+#?/;
 
 router.get('/cards', getCards);
 router.post('/cards', celebrate({

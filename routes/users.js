@@ -1,12 +1,11 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
 
+const { linkRegExp } = require('../utils/utils');
+
 const {
   getUsers, getUserByID, updateUser, updateUseravatar, getUserInfo,
 } = require('../controllers/users');
-
-// eslint-disable-next-line no-useless-escape
-const linkRegExp = /^(http|https):\/\/(www.)?[\w\-\.\_\~\:\/\?\#\[\]\@\!\$\&\'\(\)\*\+\,\;\=]+\.[\w\/]+#?/;
 
 router.get('/users', getUsers);
 
