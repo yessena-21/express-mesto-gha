@@ -11,6 +11,7 @@ const { NotFoundError } = require('./errors/not-found-error');
 const errorsHandler = require('./errors/errorHandler');
 const auth = require('./middlewares/auth');
 const routes = require('./routes');
+const mycors = require('./middlewares/cors');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -21,7 +22,7 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 
 app.use(requestLogger);
-
+app.use(mycors);
 app.use(routes);
 
 app.use(auth);
