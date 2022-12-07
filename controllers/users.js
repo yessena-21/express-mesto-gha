@@ -18,7 +18,15 @@ const login = (req, res, next) => {
 
         const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
 
-        return res.send({ token });
+        // return res.send({ token });
+        return res
+          .cookie('jwt', token, {
+          // token - наш JWT токен, который мы отправляем
+            maxAge: 3600000 * 24 * 7,
+            httpOnly: true,
+          })
+          .status(200)
+          .send({ data: user.toJSON() });
       });
     }).catch(() => {
       next(new AuthError('Неверный email или пароль'));
