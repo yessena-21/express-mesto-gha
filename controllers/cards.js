@@ -14,7 +14,7 @@ const createCard = (req, res, next) => {
   const { name, link } = req.body;
 
   Card.create({ name, link, owner: req.user._id })
-    .then((card) => res.send({ data: card }))
+    .then((data) => res.send(data))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new ValidationError('Переданы некорректные данные при создании карточки'));
@@ -57,7 +57,7 @@ const likeCard = (req, res, next) => {
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true },
   ).orFail(new NotFoundError('Карточка по указанному id не найдена'))
-    .then((card) => res.send({ data: card }))
+    .then((data) => res.send(data))
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new CastError('Невалидный id карточки'));
@@ -73,7 +73,7 @@ const dislikeCard = (req, res, next) => {
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true },
   ).orFail(new NotFoundError('Карточка по указанному id не найдена'))
-    .then((card) => res.send({ data: card }))
+    .then((data) => res.send(data))
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new CastError('Невалидный id карточки'));

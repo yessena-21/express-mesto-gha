@@ -65,7 +65,7 @@ const createUser = (req, res, next) => {
 const getUserByID = (req, res, next) => {
   User.findById(req.params.userId)
     .orFail(new NotFoundError('Пользователь по указанному id не найден'))
-    .then((user) => res.status(200).send({ data: user }))
+    .then((data) => res.status(200).send(data))
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new CastError('Невалидный id пользователя'));
@@ -99,7 +99,7 @@ const updateUser = (req, res, next) => {
       new: true,
     },
   ).orFail(new NotFoundError('Пользователь по указанному id не найден'))
-    .then((user) => res.send({ data: user }))
+    .then((data) => res.send(data))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new ValidationError('Некорректные данные запроса'));
@@ -121,7 +121,7 @@ const updateUseravatar = (req, res, next) => {
     },
   )
     .orFail(new NotFoundError('Пользователь по указанному id не найден'))
-    .then((user) => res.send({ data: user }))
+    .then((data) => res.send(data))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new ValidationError('Некорректные данные запроса'));
