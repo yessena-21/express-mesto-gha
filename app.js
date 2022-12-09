@@ -50,7 +50,7 @@ app.use('*', () => {
 app.use(errorLogger);
 app.use(errors());
 
-app.use(errorsHandler);
+// app.use(errorsHandler);
 
 app.listen(PORT, () => {
 
