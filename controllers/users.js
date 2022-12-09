@@ -33,6 +33,14 @@ const login = (req, res, next) => {
     });
 };
 
+function logout(req, res, next) {
+  try {
+    res.clearCookie('jwt')
+      .status(200)
+      .send({ message: 'успешный выход' });
+  } catch (err) { next(err); }
+}
+
 const getUsers = (req, res, next) => {
   User.find({})
     .then((data) => res.send(data))
@@ -133,6 +141,7 @@ const updateUseravatar = (req, res, next) => {
 
 module.exports = {
   login,
+  logout,
   getUserInfo,
   getUsers,
   updateUser,
