@@ -35,7 +35,7 @@ const login = (req, res, next) => {
 
 const getUsers = (req, res, next) => {
   User.find({})
-    .then((users) => res.send({ data: users }))
+    .then((data) => res.send(data))
     .catch(next);
 };
 
@@ -79,7 +79,7 @@ const getUserInfo = (req, res, next) => {
   const currentUser = req.user._id;
   User.findById(currentUser)
     .orFail(new NotFoundError('Пользователь по указанному id не найден'))
-    .then((user) => res.send({ data: user }))
+    .then((data) => res.send(data))
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new CastError('Невалидный id пользователя'));
