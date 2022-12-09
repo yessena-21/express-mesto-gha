@@ -48,7 +48,7 @@ app.use('*', () => {
 });
 
 app.use(errorLogger);
-app.use(errors());
+// app.use(errors());
 
 app.use(errorsHandler);
 
