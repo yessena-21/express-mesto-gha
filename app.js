@@ -31,7 +31,7 @@ const options = {
   credentials: true,
 };
 
-app.use(cors());
+app.use('*', cors(options));
 app.use(cookieParser());
 
 app.use(bodyParser.json());
