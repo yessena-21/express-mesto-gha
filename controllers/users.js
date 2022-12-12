@@ -8,6 +8,7 @@ const { ExistFieldError } = require('../errors/exist-field-error');
 const { NotFoundError } = require('../errors/not-found-error');
 const { AuthError } = require('../errors/auth-error');
 
+const { NODE_ENV, JWT_SECRET } = process.env;
 // const login = (req, res, next) => {
 //   const { email, password } = req.body;
 
@@ -42,7 +43,7 @@ const login = (req, res, next) => {
       bcrypt.compare(password, user.password, (error, isValidPassword) => {
         if (!isValidPassword) return next(new AuthError('Неверный email или пароль'));
 
-        const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+        const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'some-secret-key', { expiresIn: '7d' });
 
         return res.send({ token });
       });
