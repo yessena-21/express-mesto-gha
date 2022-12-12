@@ -26,7 +26,7 @@
 // }
 
 // return next(); // пропускаем запрос дальше
-
+require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const { AuthError } = require('../errors/auth-error');
 
