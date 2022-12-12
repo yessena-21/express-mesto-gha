@@ -28,7 +28,7 @@ const login = (req, res, next) => {
             secure: true,
           })
           .status(200)
-          .send({ data: user.toJSON() });
+          .send(user);
       });
     }).catch(() => {
       next(new AuthError('Неверный email или пароль'));
