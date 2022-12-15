@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
-const helmet = require('helmet');
+//const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
@@ -46,7 +46,7 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 
 app.use(requestLogger);
-app.use(helmet());
+//app.use(helmet());
 app.use(routes);
 
 app.use(auth);
