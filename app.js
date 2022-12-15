@@ -1,6 +1,8 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 
@@ -16,7 +18,12 @@ const routes = require('./routes');
 
 const { PORT = 3000 } = process.env;
 const app = express();
-
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per `window` (per 15 minutes)
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+});
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
 
 const options = {
@@ -33,11 +40,13 @@ const options = {
 };
 
 app.use('*', cors(options));
+app.use(limiter);
 app.use(cookieParser());
 
 app.use(bodyParser.json());
 
 app.use(requestLogger);
+app.use(helmet());
 app.get('/crash-test', () => {
   setTimeout(() => {
     throw new Error('Сервер сейчас упадёт');
